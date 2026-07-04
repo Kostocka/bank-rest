@@ -7,6 +7,8 @@ import com.example.bankcards.dto.CreateCardRequest;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.entity.enums.CardStatus;
+import com.example.bankcards.exception.BusinessException;
+import com.example.bankcards.exception.NotFoundException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.repository.spec.CardSpecification;
@@ -31,21 +33,21 @@ public class DefaultCardService implements CardService
     {
         if (req.cardNumber() == null || req.cardNumber().isBlank())
         {
-            throw new RuntimeException("Card number is required");
+            throw new BusinessException("Card number is required");
         }
 
         if (req.expirationDate() == null)
         {
-            throw new RuntimeException("Expiration date is required");
+            throw new BusinessException("Expiration date is required");
         }
 
         if (req.expirationDate().isBefore(YearMonth.now()))
         {
-            throw new RuntimeException("Cannot create expired card");
+            throw new BusinessException("Cannot create expired card");
         }
 
         User owner = userRepository.findById(req.ownerId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         Card card = new Card();
 
@@ -68,7 +70,7 @@ public class DefaultCardService implements CardService
 
         if (card.getStatus() == CardStatus.EXPIRED)
         {
-            throw new RuntimeException("Cannot activate expired card");
+            throw new BusinessException("Cannot activate expired card");
         }
 
         card.setStatus(CardStatus.ACTIVE);
@@ -82,7 +84,7 @@ public class DefaultCardService implements CardService
 
         if (card.getStatus() == CardStatus.EXPIRED)
         {
-            throw new RuntimeException("Card already expired");
+            throw new BusinessException("Card already expired");
         }
 
         card.setStatus(CardStatus.BLOCKED);
@@ -99,7 +101,7 @@ public class DefaultCardService implements CardService
     public Card getCard(UUID cardId)
     {
         Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new RuntimeException("Card not found"));
+                .orElseThrow(() -> new NotFoundException("Card not found"));
 
         card.setCardNumber(cardNumberMasker.mask(cardEncryptor.decrypt(card.getCardNumber())));
 

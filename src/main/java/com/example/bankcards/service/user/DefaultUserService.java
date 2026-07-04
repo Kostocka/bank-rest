@@ -4,7 +4,8 @@ import java.util.UUID;
 import com.example.bankcards.dto.CreateUserRequest;
 import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.User;
-import com.example.bankcards.entity.enums.RoleName;
+import com.example.bankcards.exception.BusinessException;
+import com.example.bankcards.exception.NotFoundException;
 import com.example.bankcards.repository.RoleRepository;
 import com.example.bankcards.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class DefaultUserService implements UserService
     public User createUser(CreateUserRequest req)
     {
         Role role = roleRepository.findByName(req.role())
-                .orElseThrow(() -> new RuntimeException("Role not found"));
+                .orElseThrow(() -> new NotFoundException("Role not found"));
 
         User user = new User();
         user.setUsername(req.username());
@@ -39,7 +40,7 @@ public class DefaultUserService implements UserService
     public User updateUser(User user)
     {
         User existing = userRepository.findById(user.getId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         if (user.getUsername() != null &&
                 !user.getUsername().isBlank() &&
@@ -48,7 +49,7 @@ public class DefaultUserService implements UserService
 
             if (userRepository.existsByUsername(user.getUsername()))
             {
-                throw new RuntimeException("Username already taken");
+                throw new BusinessException("Username already taken");
             }
 
             existing.setUsername(user.getUsername());
@@ -77,7 +78,7 @@ public class DefaultUserService implements UserService
     public User getUser(UUID userId)
     {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
     @Override
