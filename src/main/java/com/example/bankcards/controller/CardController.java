@@ -1,8 +1,9 @@
 package com.example.bankcards.controller;
 
+import com.example.bankcards.dto.CardResponse;
 import com.example.bankcards.dto.CreateCardRequest;
-import com.example.bankcards.entity.Card;
 import com.example.bankcards.service.card.CardService;
+import com.example.bankcards.util.mapper.CardMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,23 +16,24 @@ import java.util.UUID;
 public class CardController
 {
     private final CardService cardService;
+    private final CardMapper cardMapper;
 
     @PostMapping
-    public Card create(@RequestBody CreateCardRequest request)
+    public CardResponse create(@RequestBody CreateCardRequest request)
     {
-        return cardService.createCard(request);
+        return cardMapper.toResponse(cardService.createCard(request));
     }
 
     @GetMapping("/{id}")
-    public Card get(@PathVariable UUID id)
+    public CardResponse get(@PathVariable UUID id)
     {
-        return cardService.getCard(id);
+        return cardMapper.toResponse(cardService.getCard(id));
     }
 
     @GetMapping
-    public Page<Card> getAll(Pageable pageable)
+    public Page<CardResponse> getAll(Pageable pageable)
     {
-        return cardService.getCards(null, pageable);
+        return cardService.getCards(null, pageable).map(cardMapper::toResponse);
     }
 
     @DeleteMapping("/{id}")
@@ -41,14 +43,14 @@ public class CardController
     }
 
     @PostMapping("/{id}/activate")
-    public Card activate(@PathVariable UUID id)
+    public CardResponse activate(@PathVariable UUID id)
     {
-        return cardService.activateCard(id);
+        return cardMapper.toResponse(cardService.activateCard(id));
     }
 
     @PostMapping("/{id}/block")
-    public Card block(@PathVariable UUID id)
+    public CardResponse block(@PathVariable UUID id)
     {
-        return cardService.blockCard(id);
+        return cardMapper.toResponse(cardService.blockCard(id));
     }
 }

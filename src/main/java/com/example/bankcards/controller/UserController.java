@@ -1,8 +1,9 @@
 package com.example.bankcards.controller;
 
 import com.example.bankcards.dto.CreateUserRequest;
-import com.example.bankcards.entity.User;
+import com.example.bankcards.dto.UserResponse;
 import com.example.bankcards.service.user.UserService;
+import com.example.bankcards.util.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
@@ -13,17 +14,18 @@ import java.util.UUID;
 public class UserController
 {
     private final UserService userService;
+    private final UserMapper userMapper;
 
     @PostMapping
-    public User create(@RequestBody CreateUserRequest createUserRequest)
+    public UserResponse create(@RequestBody CreateUserRequest createUserRequest)
     {
-        return userService.createUser(createUserRequest);
+        return userMapper.toResponse(userService.createUser(createUserRequest));
     }
 
     @GetMapping("/{id}")
-    public User get(@PathVariable UUID id)
+    public UserResponse get(@PathVariable UUID id)
     {
-        return userService.getUser(id);
+        return userMapper.toResponse(userService.getUser(id));
     }
 
     @DeleteMapping("/{id}")
