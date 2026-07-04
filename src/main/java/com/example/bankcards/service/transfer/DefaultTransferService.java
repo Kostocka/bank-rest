@@ -1,0 +1,66 @@
+package com.example.bankcards.service.transfer;
+
+import java.math.BigDecimal;
+import java.time.YearMonth;
+import java.util.UUID;
+import com.example.bankcards.entity.Card;
+import com.example.bankcards.entity.enums.CardStatus;
+import com.example.bankcards.repository.CardRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class DefaultTransferService implements TransferService
+{
+    private final CardRepository cardRepository;
+
+    @Override
+    @Transactional
+    public void transfer(UUID fromCardId, UUID toCardId, BigDecimal amount)
+    {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0)
+        {
+            throw new RuntimeException("Amount must be positive");
+        }
+
+        if (fromCardId.equals(toCardId))
+        {
+            throw new RuntimeException("Cannot transfer to same card");
+        }
+
+        Card from = cardRepository.findById(fromCardId)
+                .orElseThrow(() -> new RuntimeException("Source card not found"));
+
+        Card to = cardRepository.findById(toCardId)
+                .orElseThrow(() -> new RuntimeException("Target card not found"));
+
+        validateCard(from);
+        validateCard(to);
+
+        if (from.getBalance().compareTo(amount) < 0)
+        {
+            throw new RuntimeException("Insufficient balance");
+        }
+
+        from.setBalance(from.getBalance().subtract(amount));
+        to.setBalance(to.getBalance().add(amount));
+
+        cardRepository.save(from);
+        cardRepository.save(to);
+    }
+
+    private void validateCard(Card card)
+    {
+        if (card.getStatus() != CardStatus.ACTIVE)
+        {
+            throw new RuntimeException("Card is not active");
+        }
+
+        if (card.getExpirationDate().isBefore(YearMonth.now()))
+        {
+            throw new RuntimeException("Card is expired");
+        }
+    }
+}
