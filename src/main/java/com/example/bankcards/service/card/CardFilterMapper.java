@@ -3,7 +3,9 @@ package com.example.bankcards.service.card;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.repository.spec.CardSpecification;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CardFilterMapper
 {
     public static Specification<Card> toSpec(CardFilter filter)
@@ -15,19 +17,23 @@ public class CardFilterMapper
 
         Specification<Card> spec = Specification.allOf();
 
-        if (filter.status() != null) {
+        if (filter.status() != null)
+        {
             spec = spec.and(CardSpecification.hasStatus(filter.status()));
         }
 
-        if (filter.expirationDate() != null) {
+        if (filter.expirationDate() != null)
+        {
             spec = spec.and(CardSpecification.hasExpiration(filter.expirationDate()));
         }
 
-        if (filter.minBalance() != null) {
+        if (filter.minBalance() != null)
+        {
             spec = spec.and(CardSpecification.balanceGte(filter.minBalance()));
         }
 
-        if (filter.maxBalance() != null) {
+        if (filter.maxBalance() != null)
+        {
             spec = spec.and(CardSpecification.balanceLte(filter.maxBalance()));
         }
 

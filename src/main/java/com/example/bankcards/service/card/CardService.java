@@ -1,5 +1,6 @@
 package com.example.bankcards.service.card;
 
+import com.example.bankcards.dto.CreateCardRequest;
 import com.example.bankcards.entity.Card;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,7 +9,7 @@ import java.util.UUID;
 
 public interface CardService
 {
-    Card createCard(Card card);
+    Card createCard(CreateCardRequest req);
 
     Card activateCard(UUID cardId);
 
