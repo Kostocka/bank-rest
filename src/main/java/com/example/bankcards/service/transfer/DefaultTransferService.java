@@ -3,6 +3,7 @@ package com.example.bankcards.service.transfer;
 import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.UUID;
+import com.example.bankcards.dto.TransferRequest;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.enums.CardStatus;
 import com.example.bankcards.repository.CardRepository;
@@ -18,8 +19,12 @@ public class DefaultTransferService implements TransferService
 
     @Override
     @Transactional
-    public void transfer(UUID fromCardId, UUID toCardId, BigDecimal amount)
+    public void transfer(TransferRequest transferRequest)
     {
+        BigDecimal amount = transferRequest.amount();
+        UUID fromCardId = transferRequest.fromCardId();
+        UUID toCardId = transferRequest.toCardId();
+
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0)
         {
             throw new RuntimeException("Amount must be positive");

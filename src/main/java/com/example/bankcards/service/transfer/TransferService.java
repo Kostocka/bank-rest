@@ -1,9 +1,8 @@
 package com.example.bankcards.service.transfer;
 
-import java.math.BigDecimal;
-import java.util.UUID;
+import com.example.bankcards.dto.TransferRequest;
 
 public interface TransferService
 {
-    void transfer(UUID fromCardId, UUID toCardId, BigDecimal amount);
+    void transfer(TransferRequest request);
 }

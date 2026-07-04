@@ -24,9 +24,7 @@ public class DefaultUserService implements UserService
     @Override
     public User createUser(CreateUserRequest req)
     {
-        RoleName roleName = RoleName.valueOf(req.role());
-
-        Role role = roleRepository.findByName(roleName)
+        Role role = roleRepository.findByName(req.role())
                 .orElseThrow(() -> new RuntimeException("Role not found"));
 
         User user = new User();

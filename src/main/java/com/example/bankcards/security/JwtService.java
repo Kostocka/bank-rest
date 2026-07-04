@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 public class JwtService
 {
-    private final String secret = "secret-key";
+    private final String secret = "secret-key-temp-key-need-be-more-sumbols-lol";
 
     private final long expirationMs = 1000 * 60 * 60;
 

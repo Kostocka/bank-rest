@@ -1,6 +1,7 @@
 package com.example.bankcards.service.auth;
 
 import java.util.List;
+import com.example.bankcards.dto.LoginRequest;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.security.JwtService;
@@ -17,12 +18,12 @@ public class DefaultAuthService implements AuthService
     private final JwtService jwtService;
 
     @Override
-    public String login(String username, String password)
+    public String login(LoginRequest request)
     {
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsername(request.username())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!passwordEncoder.matches(password, user.getPassword()))
+        if (!passwordEncoder.matches(request.password(), user.getPassword()))
         {
             throw new RuntimeException("Invalid credentials");
         }
