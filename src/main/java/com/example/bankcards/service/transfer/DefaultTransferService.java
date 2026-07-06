@@ -27,11 +27,6 @@ public class DefaultTransferService implements TransferService
         UUID fromCardId = transferRequest.fromCardId();
         UUID toCardId = transferRequest.toCardId();
 
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0)
-        {
-            throw new BusinessException("Amount must be positive");
-        }
-
         if (fromCardId.equals(toCardId))
         {
             throw new BusinessException("Cannot transfer to same card");

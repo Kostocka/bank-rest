@@ -1,5 +1,6 @@
 package com.example.bankcards.controller;
 
+import jakarta.validation.Valid;
 import com.example.bankcards.dto.CreateUserRequest;
 import com.example.bankcards.dto.UpdateUserRequest;
 import com.example.bankcards.dto.UserResponse;
@@ -21,13 +22,13 @@ public class UserController
     private final UserMapper userMapper;
 
     @PostMapping
-    public UserResponse create(@RequestBody CreateUserRequest createUserRequest)
+    public UserResponse create(@Valid @RequestBody CreateUserRequest createUserRequest)
     {
         return userMapper.toResponse(userService.createUser(createUserRequest));
     }
 
     @PutMapping("/{id}")
-    public UserResponse update(@PathVariable UUID id, @RequestBody UpdateUserRequest request)
+    public UserResponse update(@PathVariable UUID id,@Valid @RequestBody UpdateUserRequest request)
     {
         return userMapper.toResponse(userService.updateUser(request));
     }

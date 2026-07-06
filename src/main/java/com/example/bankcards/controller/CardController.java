@@ -1,5 +1,6 @@
 package com.example.bankcards.controller;
 
+import jakarta.validation.Valid;
 import com.example.bankcards.dto.CardResponse;
 import com.example.bankcards.dto.CreateCardRequest;
 import com.example.bankcards.service.card.CardService;
@@ -20,7 +21,7 @@ public class CardController
     private final CardMapper cardMapper;
 
     @PostMapping
-    public CardResponse create(@RequestBody CreateCardRequest request)
+    public CardResponse create(@Valid @RequestBody CreateCardRequest request)
     {
         return cardMapper.toResponse(cardService.createCard(request));
     }

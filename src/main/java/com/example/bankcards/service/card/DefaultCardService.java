@@ -35,20 +35,10 @@ public class DefaultCardService implements CardService
     {
         accessService.requireAdmin();
 
-        if (req.cardNumber() == null || req.cardNumber().isBlank())
-        {
-            throw new BusinessException("Card number is required");
-        }
-
         String encrypted = cardEncryptor.encrypt(req.cardNumber());
         if (cardRepository.existsByCardNumber(encrypted))
         {
             throw new BusinessException("Card already exists");
-        }
-
-        if (req.expirationDate() == null)
-        {
-            throw new BusinessException("Expiration date is required");
         }
 
         if (req.expirationDate().isBefore(YearMonth.now()))
@@ -64,7 +54,7 @@ public class DefaultCardService implements CardService
         card.setOwner(owner);
         card.setExpirationDate(req.expirationDate());
 
-        card.setCardNumber(cardEncryptor.encrypt(req.cardNumber()));
+        card.setCardNumber(encrypted);
 
         card.setStatus(CardStatus.ACTIVE);
 

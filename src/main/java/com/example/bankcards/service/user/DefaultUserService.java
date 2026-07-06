@@ -32,6 +32,11 @@ public class DefaultUserService implements UserService
         Role role = roleRepository.findByName(req.role())
                 .orElseThrow(() -> new NotFoundException("Role not found"));
 
+        if (userRepository.existsByUsername(req.username()))
+        {
+            throw new BusinessException("Username already taken");
+        }
+
         User user = new User();
         user.setUsername(req.username());
         user.setPassword(passwordEncoder.encode(req.password()));
@@ -48,10 +53,8 @@ public class DefaultUserService implements UserService
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
         if (request.username() != null &&
-                !request.username().isBlank() &&
                 !request.username().equals(existing.getUsername()))
         {
-
             if (userRepository.existsByUsername(request.username()))
             {
                 throw new BusinessException("Username already taken");
