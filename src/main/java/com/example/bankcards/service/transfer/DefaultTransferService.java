@@ -9,6 +9,7 @@ import com.example.bankcards.entity.enums.CardStatus;
 import com.example.bankcards.exception.BusinessException;
 import com.example.bankcards.exception.NotFoundException;
 import com.example.bankcards.repository.CardRepository;
+import com.example.bankcards.service.access.AccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DefaultTransferService implements TransferService
 {
     private final CardRepository cardRepository;
+    private final AccessService accessService;
 
     @Override
     @Transactional
@@ -38,6 +40,8 @@ public class DefaultTransferService implements TransferService
         Card to = cardRepository.findById(toCardId)
                 .orElseThrow(() -> new NotFoundException("Target card not found"));
 
+        accessService.requireCardOwner(from);
+        accessService.requireCardOwner(to);
         validateCard(from);
         validateCard(to);
 
