@@ -2,12 +2,14 @@ package com.example.bankcards.service.user;
 
 import java.util.UUID;
 import com.example.bankcards.dto.CreateUserRequest;
+import com.example.bankcards.dto.UpdateUserRequest;
 import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.exception.BusinessException;
 import com.example.bankcards.exception.NotFoundException;
 import com.example.bankcards.repository.RoleRepository;
 import com.example.bankcards.repository.UserRepository;
+import com.example.bankcards.service.access.AccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,10 +23,12 @@ public class DefaultUserService implements UserService
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AccessService accessService;
 
     @Override
     public User createUser(CreateUserRequest req)
     {
+        accessService.requireAdmin();
         Role role = roleRepository.findByName(req.role())
                 .orElseThrow(() -> new NotFoundException("Role not found"));
 
@@ -37,32 +41,35 @@ public class DefaultUserService implements UserService
     }
 
     @Override
-    public User updateUser(User user)
+    public User updateUser(UpdateUserRequest request)
     {
-        User existing = userRepository.findById(user.getId())
+        accessService.requireAdmin();
+        User existing = userRepository.findByUsername(request.username())
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
-        if (user.getUsername() != null &&
-                !user.getUsername().isBlank() &&
-                !user.getUsername().equals(existing.getUsername()))
+        if (request.username() != null &&
+                !request.username().isBlank() &&
+                !request.username().equals(existing.getUsername()))
         {
 
-            if (userRepository.existsByUsername(user.getUsername()))
+            if (userRepository.existsByUsername(request.username()))
             {
                 throw new BusinessException("Username already taken");
             }
 
-            existing.setUsername(user.getUsername());
+            existing.setUsername(request.username());
         }
 
-        if (user.getPassword() != null)
+        if (request.password() != null)
         {
-            existing.setPassword(passwordEncoder.encode(user.getPassword()));
+            existing.setPassword(passwordEncoder.encode(request.password()));
         }
 
-        if (user.getRole() != null)
+        if (request.role() != null)
         {
-            existing.setRole(user.getRole());
+            Role role = roleRepository.findByName(request.role())
+                    .orElseThrow(() -> new NotFoundException("Role not found"));
+            existing.setRole(role);
         }
 
         return userRepository.save(existing);
@@ -71,12 +78,14 @@ public class DefaultUserService implements UserService
     @Override
     public void deleteUser(UUID userId)
     {
+        accessService.requireAdmin();
         userRepository.deleteById(userId);
     }
 
     @Override
     public User getUser(UUID userId)
     {
+        accessService.requireAdmin();
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found"));
     }
@@ -84,6 +93,7 @@ public class DefaultUserService implements UserService
     @Override
     public Page<User> getUsers(Pageable pageable)
     {
+        accessService.requireAdmin();
         return userRepository.findAll(pageable);
     }
 }

@@ -24,11 +24,5 @@ public interface CardService
             Pageable pageable
     );
 
-    Page<Card> getUserCards(
-            UUID userId,
-            CardFilter filter,
-            Pageable pageable
-    );
-
     BigDecimal getBalance(UUID cardId);
 }

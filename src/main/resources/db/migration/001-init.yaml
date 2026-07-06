@@ -1,0 +1,194 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 001-create-roles
+      author: kostocka
+
+      changes:
+        - createTable:
+            tableName: roles
+
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: name
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+  - changeSet:
+      id: 002-create-users
+      author: kostocka
+
+      changes:
+        - createTable:
+            tableName: users
+
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: username
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: role_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            constraintName: fk_users_role
+            baseTableName: users
+            baseColumnNames: role_id
+            referencedTableName: roles
+            referencedColumnNames: id
+
+  - changeSet:
+      id: 003-create-cards
+      author: kostocka
+
+      changes:
+        - createTable:
+            tableName: cards
+
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: card_number
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+              - column:
+                  name: expiration_date
+                  type: VARCHAR(7)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: balance
+                  type: NUMERIC(19,2)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: owner_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            constraintName: fk_cards_owner
+            baseTableName: cards
+            baseColumnNames: owner_id
+            referencedTableName: users
+            referencedColumnNames: id
+
+  - changeSet:
+      id: 004-insert-roles
+      author: kostocka
+
+      changes:
+        - insert:
+            tableName: roles
+
+            columns:
+              - column:
+                  name: id
+                  valueComputed: gen_random_uuid()
+
+              - column:
+                  name: name
+                  value: ROLE_ADMIN
+
+        - insert:
+            tableName: roles
+
+            columns:
+              - column:
+                  name: id
+                  valueComputed: gen_random_uuid()
+
+              - column:
+                  name: name
+                  value: ROLE_USER
+
+  - changeSet:
+      id: 005-create-card-block-requests
+      author: kostocka
+
+      changes:
+        - createTable:
+            tableName: card_block_requests
+
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: card_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: processed_at
+                  type: TIMESTAMP
+
+        - addForeignKeyConstraint:
+            constraintName: fk_block_requests_card
+            baseTableName: card_block_requests
+            baseColumnNames: card_id
+            referencedTableName: cards
+            referencedColumnNames: id

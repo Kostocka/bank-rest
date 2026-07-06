@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 public interface CardRepository extends
         JpaRepository<Card, UUID>,
         JpaSpecificationExecutor<Card>
-{ }
+{
+    boolean existsByCardNumber(String cardNumber);
+}

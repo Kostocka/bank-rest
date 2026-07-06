@@ -5,6 +5,7 @@ import com.example.bankcards.dto.CreateCardRequest;
 import com.example.bankcards.service.card.CardService;
 import com.example.bankcards.util.mapper.CardMapper;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,7 @@ public class CardController
     }
 
     @GetMapping
-    public Page<CardResponse> getAll(Pageable pageable)
+    public Page<CardResponse> getAll(@ParameterObject Pageable pageable)
     {
         return cardService.getCards(null, pageable).map(cardMapper::toResponse);
     }

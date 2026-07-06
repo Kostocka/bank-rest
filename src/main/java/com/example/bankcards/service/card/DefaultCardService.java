@@ -12,8 +12,9 @@ import com.example.bankcards.exception.NotFoundException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.repository.spec.CardSpecification;
+import com.example.bankcards.security.CurrentUserService;
+import com.example.bankcards.service.access.AccessService;
 import com.example.bankcards.util.CardEncryptor;
-import com.example.bankcards.util.CardNumberMasker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,14 +27,23 @@ public class DefaultCardService implements CardService
     private final CardRepository cardRepository;
     private final UserRepository userRepository;
     private final CardEncryptor cardEncryptor;
-    private final CardNumberMasker cardNumberMasker;
+    private final CurrentUserService currentUserService;
+    private final AccessService accessService;
 
     @Override
     public Card createCard(CreateCardRequest req)
     {
+        accessService.requireAdmin();
+
         if (req.cardNumber() == null || req.cardNumber().isBlank())
         {
             throw new BusinessException("Card number is required");
+        }
+
+        String encrypted = cardEncryptor.encrypt(req.cardNumber());
+        if (cardRepository.existsByCardNumber(encrypted))
+        {
+            throw new BusinessException("Card already exists");
         }
 
         if (req.expirationDate() == null)
@@ -66,7 +76,8 @@ public class DefaultCardService implements CardService
     @Override
     public Card activateCard(UUID cardId)
     {
-        Card card = getCard(cardId);
+        accessService.requireAdmin();
+        Card card = requireCard(cardId);
 
         if (card.getStatus() == CardStatus.EXPIRED)
         {
@@ -74,13 +85,15 @@ public class DefaultCardService implements CardService
         }
 
         card.setStatus(CardStatus.ACTIVE);
+
         return cardRepository.save(card);
     }
 
     @Override
     public Card blockCard(UUID cardId)
     {
-        Card card = getCard(cardId);
+        accessService.requireAdmin();
+        Card card = requireCard(cardId);
 
         if (card.getStatus() == CardStatus.EXPIRED)
         {
@@ -94,42 +107,53 @@ public class DefaultCardService implements CardService
     @Override
     public void deleteCard(UUID cardId)
     {
-        cardRepository.deleteById(cardId);
+        accessService.requireAdmin();
+        Card card = requireCard(cardId);
+
+        cardRepository.delete(card);
     }
 
     @Override
     public Card getCard(UUID cardId)
     {
-        Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new NotFoundException("Card not found"));
-
-        card.setCardNumber(cardNumberMasker.mask(cardEncryptor.decrypt(card.getCardNumber())));
-
-        return card;
+        return requireOwnedCard(cardId);
     }
 
     @Override
     public Page<Card> getCards(CardFilter filter, Pageable pageable)
     {
         var spec = CardFilterMapper.toSpec(filter);
-        return cardRepository.findAll(spec, pageable)
-                .map(card ->
-                {
-                    card.setCardNumber(cardNumberMasker.mask(cardEncryptor.decrypt(card.getCardNumber())));
-                    return card;
-                });
-    }
 
-    @Override
-    public Page<Card> getUserCards(UUID userId, CardFilter filter, Pageable pageable)
-    {
-        var spec = CardFilterMapper.toSpec(filter).and(CardSpecification.hasOwner(userId));
+        if (!currentUserService.isAdmin())
+        {
+            spec = spec.and(CardSpecification.hasOwner(currentUserService.getCurrentUserId()));
+        }
+
         return cardRepository.findAll(spec, pageable);
     }
 
     @Override
     public BigDecimal getBalance(UUID cardId)
     {
-        return getCard(cardId).getBalance();
+        return requireOwnedCard(cardId).getBalance();
+    }
+
+    private Card requireCard(UUID cardId)
+    {
+        return cardRepository.findById(cardId)
+                .orElseThrow(() -> new NotFoundException("Card not found"));
+    }
+
+    private Card requireOwnedCard(UUID cardId)
+    {
+        Card card = requireCard(cardId);
+
+        if (!currentUserService.isAdmin()
+                && !card.getOwner().getId().equals(currentUserService.getCurrentUserId()))
+        {
+            throw new BusinessException("Access denied");
+        }
+
+        return card;
     }
 }
