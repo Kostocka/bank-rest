@@ -3,7 +3,7 @@ package com.example.bankcards.service.transfer;
 import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.UUID;
-import com.example.bankcards.dto.TransferRequest;
+import com.example.bankcards.dto.request.TransferRequest;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.enums.CardStatus;
 import com.example.bankcards.exception.BusinessException;

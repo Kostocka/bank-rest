@@ -1,9 +1,9 @@
 package com.example.bankcards.controller;
 
 import jakarta.validation.Valid;
-import com.example.bankcards.dto.CreateUserRequest;
-import com.example.bankcards.dto.UpdateUserRequest;
-import com.example.bankcards.dto.UserResponse;
+import com.example.bankcards.dto.request.CreateUserRequest;
+import com.example.bankcards.dto.request.UpdateUserRequest;
+import com.example.bankcards.dto.response.UserResponse;
 import com.example.bankcards.service.user.UserService;
 import com.example.bankcards.util.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;

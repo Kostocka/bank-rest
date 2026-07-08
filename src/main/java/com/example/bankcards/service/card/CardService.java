@@ -1,6 +1,6 @@
 package com.example.bankcards.service.card;
 
-import com.example.bankcards.dto.CreateCardRequest;
+import com.example.bankcards.dto.request.CreateCardRequest;
 import com.example.bankcards.entity.Card;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,4 +1,4 @@
-package com.example.bankcards.dto;
+package com.example.bankcards.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 
@@ -6,6 +6,6 @@ public record LoginRequest(
         @NotBlank(message = "Username is required")
         String username,
 
-        @NotBlank(message = "Username is required")
+        @NotBlank(message = "Password is required")
         String password
 ) {}

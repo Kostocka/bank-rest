@@ -1,6 +1,6 @@
 package com.example.bankcards.util.mapper;
 
-import com.example.bankcards.dto.CardBlockRequestResponse;
+import com.example.bankcards.dto.response.CardBlockRequestResponse;
 import com.example.bankcards.entity.CardBlockRequest;
 import org.springframework.stereotype.Component;
 

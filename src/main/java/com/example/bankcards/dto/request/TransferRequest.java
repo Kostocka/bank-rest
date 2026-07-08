@@ -1,4 +1,4 @@
-package com.example.bankcards.dto;
+package com.example.bankcards.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -8,7 +8,7 @@ import java.util.UUID;
 public record TransferRequest(
         @NotNull(message = "Source card is required")
         UUID fromCardId,
-        @NotNull(message = "Source card is required")
+        @NotNull(message = "Destination card is required")
         UUID toCardId,
 
         @NotNull(message = "Amount is required")

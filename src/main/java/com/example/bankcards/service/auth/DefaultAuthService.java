@@ -1,7 +1,7 @@
 package com.example.bankcards.service.auth;
 
 import java.util.List;
-import com.example.bankcards.dto.LoginRequest;
+import com.example.bankcards.dto.request.LoginRequest;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.exception.BusinessException;
 import com.example.bankcards.repository.UserRepository;

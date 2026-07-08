@@ -1,8 +1,8 @@
 package com.example.bankcards.service.user;
 
 import java.util.UUID;
-import com.example.bankcards.dto.CreateUserRequest;
-import com.example.bankcards.dto.UpdateUserRequest;
+import com.example.bankcards.dto.request.CreateUserRequest;
+import com.example.bankcards.dto.request.UpdateUserRequest;
 import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.exception.BusinessException;

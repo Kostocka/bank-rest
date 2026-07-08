@@ -1,7 +1,7 @@
 package com.example.bankcards.controller;
 
 import java.util.UUID;
-import com.example.bankcards.dto.CardBlockRequestResponse;
+import com.example.bankcards.dto.response.CardBlockRequestResponse;
 import com.example.bankcards.service.card.CardRequestService;
 import com.example.bankcards.util.mapper.CardBlockRequestMapper;
 import lombok.RequiredArgsConstructor;

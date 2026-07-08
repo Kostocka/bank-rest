@@ -1,7 +1,7 @@
 package com.example.bankcards.service.user;
 
-import com.example.bankcards.dto.CreateUserRequest;
-import com.example.bankcards.dto.UpdateUserRequest;
+import com.example.bankcards.dto.request.CreateUserRequest;
+import com.example.bankcards.dto.request.UpdateUserRequest;
 import com.example.bankcards.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

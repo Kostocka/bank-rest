@@ -1,4 +1,4 @@
-package com.example.bankcards.dto;
+package com.example.bankcards.dto.request;
 
 import jakarta.validation.constraints.Size;
 import com.example.bankcards.entity.enums.RoleName;

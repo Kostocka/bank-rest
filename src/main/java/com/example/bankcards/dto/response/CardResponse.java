@@ -1,4 +1,4 @@
-package com.example.bankcards.dto;
+package com.example.bankcards.dto.response;
 
 import java.math.BigDecimal;
 import java.time.YearMonth;
@@ -8,7 +8,7 @@ public record CardResponse(
         UUID id,
         String cardNumber,
         YearMonth expirationDate,
-        String status,
+        CardResponse status,
         BigDecimal balance,
         UUID ownerId
 ) {}

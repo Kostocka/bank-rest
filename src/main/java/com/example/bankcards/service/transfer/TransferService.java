@@ -1,6 +1,6 @@
 package com.example.bankcards.service.transfer;
 
-import com.example.bankcards.dto.TransferRequest;
+import com.example.bankcards.dto.request.TransferRequest;
 
 public interface TransferService
 {

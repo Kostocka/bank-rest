@@ -1,4 +1,4 @@
-package com.example.bankcards.dto;
+package com.example.bankcards.dto.request;
 
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
