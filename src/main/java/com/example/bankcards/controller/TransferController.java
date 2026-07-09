@@ -2,7 +2,8 @@ package com.example.bankcards.controller;
 
 import jakarta.validation.Valid;
 import com.example.bankcards.dto.request.TransferRequest;
-import com.example.bankcards.service.transfer.TransferService;
+import com.example.bankcards.security.CurrentUserService;
+import com.example.bankcards.service.transfer.TransferCommandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,11 +12,12 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class TransferController
 {
-    private final TransferService transferService;
+    private final TransferCommandService transferService;
+    private final CurrentUserService currentUserService;
 
     @PostMapping
     public void transfer(@Valid @RequestBody TransferRequest transferRequest)
     {
-        transferService.transfer(transferRequest);
+        transferService.transfer(transferRequest, currentUserService.getCurrentUserId());
     }
 }

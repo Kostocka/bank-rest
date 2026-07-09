@@ -12,7 +12,7 @@ public class CardBlockRequestMapper
         return new CardBlockRequestResponse(
                 request.getId(),
                 request.getCard().getId(),
-                request.getStatus().name(),
+                request.getStatus(),
                 request.getCreatedAt(),
                 request.getProcessedAt()
         );

@@ -1,6 +1,5 @@
 package com.example.bankcards.service.transfer;
 
-import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.UUID;
 import com.example.bankcards.dto.request.TransferRequest;
@@ -9,49 +8,43 @@ import com.example.bankcards.entity.enums.CardStatus;
 import com.example.bankcards.exception.BusinessException;
 import com.example.bankcards.exception.NotFoundException;
 import com.example.bankcards.repository.CardRepository;
-import com.example.bankcards.service.access.AccessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class DefaultTransferService implements TransferService
+public class DefaultTransferCommandService implements TransferCommandService
 {
     private final CardRepository cardRepository;
-    private final AccessService accessService;
 
     @Override
     @Transactional
-    public void transfer(TransferRequest transferRequest)
+    public void transfer(TransferRequest transferRequest, UUID userId)
     {
-        BigDecimal amount = transferRequest.amount();
-        UUID fromCardId = transferRequest.fromCardId();
-        UUID toCardId = transferRequest.toCardId();
-
-        if (fromCardId.equals(toCardId))
+        if (transferRequest.fromCardId().equals(transferRequest.toCardId()))
         {
             throw new BusinessException("Cannot transfer to same card");
         }
 
-        Card from = cardRepository.findById(fromCardId)
+        Card from = cardRepository
+                .findByIdAndOwnerId(transferRequest.fromCardId(), userId)
                 .orElseThrow(() -> new NotFoundException("Source card not found"));
 
-        Card to = cardRepository.findById(toCardId)
+        Card to = cardRepository
+                .findByIdAndOwnerId(transferRequest.toCardId(), userId)
                 .orElseThrow(() -> new NotFoundException("Target card not found"));
 
-        accessService.requireCardOwner(from);
-        accessService.requireCardOwner(to);
         validateCard(from);
         validateCard(to);
 
-        if (from.getBalance().compareTo(amount) < 0)
+        if (from.getBalance().compareTo(transferRequest.amount()) < 0)
         {
             throw new BusinessException("Insufficient balance");
         }
 
-        from.setBalance(from.getBalance().subtract(amount));
-        to.setBalance(to.getBalance().add(amount));
+        from.setBalance(from.getBalance().subtract(transferRequest.amount()));
+        to.setBalance(to.getBalance().add(transferRequest.amount()));
 
         cardRepository.save(from);
         cardRepository.save(to);

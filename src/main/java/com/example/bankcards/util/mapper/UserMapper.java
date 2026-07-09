@@ -12,7 +12,7 @@ public class UserMapper
         return new UserResponse(
                 user.getId(),
                 user.getUsername(),
-                user.getRole().getName().name()
+                user.getRole().getName()
         );
     }
 }

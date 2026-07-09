@@ -2,44 +2,26 @@ package com.example.bankcards.controller;
 
 import java.util.UUID;
 import com.example.bankcards.dto.response.CardBlockRequestResponse;
-import com.example.bankcards.service.card.CardRequestService;
+import com.example.bankcards.security.CurrentUserService;
+import com.example.bankcards.service.cardrequest.CardRequestCommandService;
 import com.example.bankcards.util.mapper.CardBlockRequestMapper;
 import lombok.RequiredArgsConstructor;
-import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/card-requests")
+@RequestMapping("/cards")
 @RequiredArgsConstructor
 public class CardRequestController
 {
-    private final CardRequestService service;
+    private final CardRequestCommandService commandService;
+    private final CurrentUserService currentUser;
     private final CardBlockRequestMapper mapper;
 
-    @PostMapping("/{cardId}")
-    public CardBlockRequestResponse create(@PathVariable UUID cardId)
+    @PostMapping("/{id}/block-request")
+    public CardBlockRequestResponse requestBlock(@PathVariable UUID id)
     {
-        return mapper.toResponse(service.createRequest(cardId));
-    }
-
-    @GetMapping
-    public Page<CardBlockRequestResponse> getAll(@ParameterObject Pageable pageable)
-    {
-        return service.getRequests(pageable)
-                .map(mapper::toResponse);
-    }
-
-    @PostMapping("/{id}/approve")
-    public CardBlockRequestResponse approve(@PathVariable UUID id)
-    {
-        return mapper.toResponse(service.approve(id));
-    }
-
-    @PostMapping("/{id}/reject")
-    public CardBlockRequestResponse reject(@PathVariable UUID id)
-    {
-        return mapper.toResponse(service.reject(id));
+        return mapper.toResponse(
+                commandService.createRequest(id, currentUser.getCurrentUserId())
+        );
     }
 }

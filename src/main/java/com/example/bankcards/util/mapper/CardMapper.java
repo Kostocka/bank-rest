@@ -18,15 +18,11 @@ public class CardMapper
     {
         String cardNumber = encryptor.decrypt(card.getCardNumber());
 
-        System.out.println(card.getCardNumber());
-        System.out.println(cardNumber);
-        System.out.println(cardNumber.length());
-
         return new CardResponse(
                 card.getId(),
                 masker.mask(cardNumber),
                 card.getExpirationDate(),
-                card.getStatus().name(),
+                card.getStatus(),
                 card.getBalance(),
                 card.getOwner().getId()
         );
