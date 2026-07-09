@@ -5,6 +5,7 @@ import java.util.UUID;
 import com.example.bankcards.dto.request.CreateCardRequest;
 import com.example.bankcards.dto.response.CardResponse;
 import com.example.bankcards.service.card.CardCommandService;
+import com.example.bankcards.service.card.CardFilter;
 import com.example.bankcards.service.card.CardQueryService;
 import com.example.bankcards.util.mapper.CardMapper;
 import lombok.RequiredArgsConstructor;
@@ -33,9 +34,9 @@ public class AdminCardController
     }
 
     @GetMapping
-    public Page<CardResponse> getAll(@ParameterObject Pageable pageable)
+    public Page<CardResponse> getAll(@ParameterObject CardFilter filter, @ParameterObject Pageable pageable)
     {
-        return queryService.getCards(null, pageable)
+        return queryService.getCards(filter, pageable)
                 .map(mapper::toResponse);
     }
 

@@ -2,6 +2,7 @@ package com.example.bankcards.controller;
 
 import com.example.bankcards.dto.response.CardResponse;
 import com.example.bankcards.security.CurrentUserService;
+import com.example.bankcards.service.card.CardFilter;
 import com.example.bankcards.service.card.CardQueryService;
 import com.example.bankcards.util.mapper.CardMapper;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +29,10 @@ public class CardController
     }
 
     @GetMapping
-    public Page<CardResponse> getAll(@ParameterObject Pageable pageable)
+    public Page<CardResponse> getAll(@ParameterObject CardFilter filter, @ParameterObject Pageable pageable)
     {
         return queryService
-                .getUserCards(currentUser.getCurrentUserId(), null, pageable)
+                .getUserCards(currentUser.getCurrentUserId(), filter, pageable)
                 .map(mapper::toResponse);
     }
 }
