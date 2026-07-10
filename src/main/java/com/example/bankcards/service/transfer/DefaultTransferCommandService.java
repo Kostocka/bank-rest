@@ -59,6 +59,8 @@ public class DefaultTransferCommandService implements TransferCommandService
 
         if (card.getExpirationDate().isBefore(YearMonth.now()))
         {
+            card.setStatus(CardStatus.EXPIRED);
+            cardRepository.save(card);
             throw new BusinessException("Card is expired");
         }
     }
