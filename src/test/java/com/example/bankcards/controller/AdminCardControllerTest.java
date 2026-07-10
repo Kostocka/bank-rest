@@ -5,12 +5,15 @@ import java.util.List;
 import java.util.UUID;
 import com.example.bankcards.dto.request.CreateCardRequest;
 import com.example.bankcards.entity.Card;
+import com.example.bankcards.security.CustomUserDetailsService;
+import com.example.bankcards.security.JwtService;
 import com.example.bankcards.service.card.CardCommandService;
 import com.example.bankcards.service.card.CardQueryService;
 import com.example.bankcards.util.mapper.CardMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
@@ -23,6 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AdminCardController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class AdminCardControllerTest
 {
     @Autowired
@@ -39,6 +43,12 @@ class AdminCardControllerTest
 
     @MockitoBean
     private CardMapper mapper;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private CustomUserDetailsService customUserDetailsService;
 
     @Test
     void shouldCreateCard() throws Exception
