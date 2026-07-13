@@ -3,7 +3,10 @@ databaseChangeLog:
   - changeSet:
       id: 001-create-roles
       author: kostocka
-
+      preConditions:
+        - not:
+            tableExists:
+              tableName: roles
       changes:
         - createTable:
             tableName: roles
@@ -26,7 +29,12 @@ databaseChangeLog:
   - changeSet:
       id: 002-create-users
       author: kostocka
-
+      preConditions:
+        - tableExists:
+            tableName: roles
+        - not:
+            tableExists:
+              tableName: users
       changes:
         - createTable:
             tableName: users
@@ -68,7 +76,12 @@ databaseChangeLog:
   - changeSet:
       id: 003-create-cards
       author: kostocka
-
+      preConditions:
+        - tableExists:
+            tableName: users
+        - not:
+            tableExists:
+              tableName: cards
       changes:
         - createTable:
             tableName: cards
@@ -122,7 +135,12 @@ databaseChangeLog:
   - changeSet:
       id: 004-insert-roles
       author: kostocka
-
+      preConditions:
+        - tableExists:
+            tableName: roles
+        - sqlCheck:
+            expectedResult: 0
+            sql: SELECT COUNT(*) FROM roles
       changes:
         - insert:
             tableName: roles
@@ -151,7 +169,12 @@ databaseChangeLog:
   - changeSet:
       id: 005-create-card-block-requests
       author: kostocka
-
+      preConditions:
+        - tableExists:
+            tableName: cards
+        - not:
+            tableExists:
+              tableName: card_block_requests
       changes:
         - createTable:
             tableName: card_block_requests

@@ -3,7 +3,9 @@ package com.example.bankcards.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
@@ -11,11 +13,17 @@ import java.util.List;
 @Service
 public class JwtService
 {
-    private final String secret = "secret-key-temp-key-need-be-more-sumbols-lol";
+    private final Key key;
+    private final long expirationMs;
 
-    private final long expirationMs = 1000 * 60 * 60;
-
-    private final Key key = Keys.hmacShaKeyFor(secret.getBytes());
+    public JwtService(
+            @Value("${jwt.secret}") String secret,
+            @Value("${jwt.expiration}") long expirationMs
+    )
+    {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.expirationMs = expirationMs;
+    }
 
     public String generateToken(String username, List<String> roles)
     {
